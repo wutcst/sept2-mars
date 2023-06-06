@@ -17,13 +17,17 @@ public class Game
 {
     private Parser parser;
     private Room currentRoom;
-
+    /**
+     * 创建游戏并初始化内部数据和解析器.
+     */
     public Game()
     {
         createRooms();
         parser = new Parser();
     }
-
+    /**
+     * 创建所有房间对象并连接其出口用以构建迷宫.
+     */
     private void createRooms()
     {
         Room outside, theater, pub, lab, office;
@@ -51,7 +55,9 @@ public class Game
 
         currentRoom = outside;  // start game outside
     }
-
+    /**
+     *  游戏主控循环，直到用户输入退出命令后结束整个程序.
+     */
     public void play()
     {
         printWelcome();
@@ -71,7 +77,9 @@ public class Game
 
         System.out.println("Thank you for playing.  Good bye.");
     }
-
+    /**
+     * 向用户输出欢迎信息.
+     */
     private void printWelcome()
     {
         System.out.println();
@@ -81,11 +89,15 @@ public class Game
         System.out.println();
         System.out.println(currentRoom.getLongDescription());
     }
-
+    /**
+     * 获取当前房间
+     */
     public Room getCurrentRoom() {
         return currentRoom;
     }
-
+    /**
+     * 设置当前房间所在房间
+     */
     public void setCurrentRoom(Room room){
         this.currentRoom = room;
     }

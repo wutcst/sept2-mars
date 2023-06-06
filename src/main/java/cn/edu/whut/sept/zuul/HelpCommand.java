@@ -1,5 +1,7 @@
 package cn.edu.whut.sept.zuul;
-
+/**
+ * 继承Command类的HelpCommand类
+ */
 public class HelpCommand extends Command
 {
     private CommandWords commandWords;
@@ -8,7 +10,9 @@ public class HelpCommand extends Command
     {
         commandWords = words;
     }
-
+    /**
+     * 执行程序
+     */
     public boolean execute(Game game)
     {
         System.out.println("You are lost. You are alone. You wander");

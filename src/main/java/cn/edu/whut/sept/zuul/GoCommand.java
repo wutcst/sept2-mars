@@ -1,6 +1,8 @@
 package cn.edu.whut.sept.zuul;
-
-public class GoCommand extends Command
+/**
+ * 继承Command类的GoCommand类
+ */
+class GoCommand extends Command
 {
     public boolean execute(Game game)
     {
