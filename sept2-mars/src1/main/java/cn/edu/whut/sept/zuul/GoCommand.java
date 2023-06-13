@@ -1,12 +1,11 @@
 package cn.edu.whut.sept.zuul;
+
 /**
  * 继承Command类的GoCommand类
  */
-class GoCommand extends Command
-{
-    public boolean execute(Game game)
-    {
-        if(!hasSecondWord()) {
+class GoCommand extends Command {
+    public boolean execute(Game game) {
+        if (!hasSecondWord()) {
             System.out.println("Go where?");
         }
 
@@ -17,8 +16,7 @@ class GoCommand extends Command
 
         if (nextRoom == null) {
             System.out.println("There is no door!");
-        }
-        else {
+        } else {
             game.setCurrentRoom(nextRoom);
             System.out.println(nextRoom.getLongDescription());
         }
