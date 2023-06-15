@@ -20,6 +20,7 @@ public class User {
     private String password;
     private Integer level;
     private String currentroom;
+    private String lastroom;
     private String gold;
     private String coin;
 }
