@@ -59,4 +59,34 @@ public class Parser
     {
         commands.showAll();
     }
+
+    /**
+     * 只用于测试
+     * @param aString
+     */
+    public Command testCommand(String aString)
+    {
+        String inputLine;   //保留完整的输入行
+        String word1 = null;
+        String word2 = null;
+        //判断输入的前两个单词
+        inputLine = aString;
+        //将输入信息传递至tokenizer
+        Scanner tokenizer = new Scanner(inputLine);
+        if(tokenizer.hasNext()) {
+            word1 = tokenizer.next();   //获取第一个单词
+            if(tokenizer.hasNext()) {
+                word2 = tokenizer.next();   //获取第二个单词
+            }
+        }
+        //判断前一个词汇是否为已知指令词,如果是，用以创建指令
+        if(commands.isCommand(word1)) {
+            System.out.println("当前获取的指令："+word1+"\t"+word2);
+            return new Command(word1, word2);
+        }
+        else {
+            System.out.println("当前获取的指令："+"空指令"+"\t"+word2);
+            return new Command(null, word2);
+        }
+    }
 }
