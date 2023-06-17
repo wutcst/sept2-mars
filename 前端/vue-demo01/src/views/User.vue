@@ -18,9 +18,9 @@
      <el-table-column prop="id" label="ID" width="170" sortable/>
      <el-table-column prop="name" label="用户名" width="220" />
      <el-table-column prop="currentroom" label="当前房间" width="220" />
-     <el-table-column prop="gold" label="金币" width="220" />
-     <el-table-column prop="coin" label="硬币" width="220" />
-     <el-table-column fixed="right" label="操作" width="169">
+     <el-table-column prop="gold" label="金币" width="250" />
+     <el-table-column prop="coin" label="硬币" width="250" />
+     <el-table-column fixed="right" label="操作" width="350">
        <template #default="scope">
          <el-button type="text" size="small" @click="handleEdit(scope.row)"
          >修改</el-button
@@ -72,7 +72,7 @@
         <el-form-item label="金币" style="width: 80%">
           <el-input v-model="form.gold" />
         </el-form-item>
-        <el-form-item label="硬币" style="width: 80%">
+        <el-form-item label="体力" style="width: 80%">
           <el-input v-model="form.coin" />
         </el-form-item>
       </el-form>
@@ -158,7 +158,7 @@ export default {
       })
     },
     add(){
-        this.dialogVisible=true,
+        this.dialogVisible=true
         this.form={}
     },
     adduser(){
@@ -174,7 +174,7 @@ export default {
       if(this.form.id){
         request.put("/user",this.form).then(res => {
           console.log(res)
-          if(res.code=="0"){
+          if(res.code==="0"){
             this.$message({
               type:"success",
               message:"更新成功"
@@ -191,7 +191,7 @@ export default {
       }else{
         request.post("/user",this.form).then(res => {
           console.log(res)
-          if(res.code=="0"){
+          if(res.code==="0"){
             this.$message({
               type:"success",
               message:"新增成功"
