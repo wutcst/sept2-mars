@@ -2,7 +2,7 @@
   <div>
     <Header />
   </div>
-  <el-image style="width: 70%; height:700px" :src="url" />
+  <el-image style="width: 90%; height:80%" :src="url" />
   <div class="a">
   <el-descriptions title="" :column="3" border>
     <el-descriptions-item
@@ -115,7 +115,7 @@ export default {
             if(map['name']===this.location){
               this.gold=map['gold']
               this.coin=map['coin']
-              this.descriptions=map['descriptions']
+              this.descriptions="Now,you are "+map['descriptions']
               this.id=map['id']
               this.url=require("@/"+this.rooms[this.id-1]['picture'])
           }
@@ -454,8 +454,8 @@ export default {
       })
     },
     add(){
-      this.dialogVisible=true,
-          this.form={}
+      this.dialogVisible=true
+      this.form={}
     },
     save(){
       if(this.form.id){
@@ -519,7 +519,7 @@ export default {
   margin: auto;
   position: absolute;
   top: 50px;
-  left: 0px;
+  left: 0;
   right: 0;
   bottom: 0;
 }
