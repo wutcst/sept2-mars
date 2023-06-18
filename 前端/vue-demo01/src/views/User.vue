@@ -1,4 +1,8 @@
 <template>
+  <div>
+    <Header />
+  </div>
+
   <div style="padding: 10px">
     <div style="margin: 10px 0 ;display: flex">
 <!--      <el-button type="primary" @click="open">游戏规则说明</el-button>-->
@@ -14,9 +18,9 @@
      <el-table-column prop="id" label="ID" width="170" sortable/>
      <el-table-column prop="name" label="用户名" width="220" />
      <el-table-column prop="currentroom" label="当前房间" width="220" />
-     <el-table-column prop="gold" label="金币" width="220" />
-     <el-table-column prop="coin" label="硬币" width="220" />
-     <el-table-column fixed="right" label="操作" width="169">
+     <el-table-column prop="gold" label="金币" width="250" />
+     <el-table-column prop="coin" label="硬币" width="250" />
+     <el-table-column fixed="right" label="操作" width="350">
        <template #default="scope">
          <el-button type="text" size="small" @click="handleEdit(scope.row)"
          >修改</el-button
@@ -68,7 +72,7 @@
         <el-form-item label="金币" style="width: 80%">
           <el-input v-model="form.gold" />
         </el-form-item>
-        <el-form-item label="硬币" style="width: 80%">
+        <el-form-item label="体力" style="width: 80%">
           <el-input v-model="form.coin" />
         </el-form-item>
       </el-form>
@@ -86,9 +90,12 @@
         title="新增用户"
         width="30%"
     ><el-form :model="form" label-width="120px">
-              <el-form-item label="用户名" style="width: 80%">
-                <el-input v-model="form.name" />
-              </el-form-item>
+      <el-form-item label="用户名" style="width: 80%">
+        <el-input v-model="form.name" />
+      </el-form-item>
+      <el-form-item label="密码" style="width: 80%">
+        <el-input v-model="form.password" />
+      </el-form-item>
       <el-form-item label="当前位置" style="width: 80%">
         <el-input v-model="form.currentroom" />
       </el-form-item>
@@ -113,10 +120,11 @@
 
 <script>
 import request from "@/utils/request";
-
+import Header from "@/components/Header";
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: "User",
+  components: {Header},
   data(){
     return{
       form:{},
@@ -150,7 +158,7 @@ export default {
       })
     },
     add(){
-        this.dialogVisible=true,
+        this.dialogVisible=true
         this.form={}
     },
     adduser(){
@@ -166,7 +174,7 @@ export default {
       if(this.form.id){
         request.put("/user",this.form).then(res => {
           console.log(res)
-          if(res.code=="0"){
+          if(res.code==="0"){
             this.$message({
               type:"success",
               message:"更新成功"
@@ -183,7 +191,7 @@ export default {
       }else{
         request.post("/user",this.form).then(res => {
           console.log(res)
-          if(res.code=="0"){
+          if(res.code==="0"){
             this.$message({
               type:"success",
               message:"新增成功"
@@ -207,7 +215,7 @@ export default {
     },
     handleDelete(id){
       request.delete("/user/"+id).then(res=>{
-        if(res.code=="0"){
+        if(res.code==="0"){
           this.$message({
             type:"success",
             message:"删除成功"

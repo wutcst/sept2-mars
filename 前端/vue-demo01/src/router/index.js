@@ -8,30 +8,31 @@ const routes = [
         component: Layout,
         redirect: "/login",
         children: [
-            {
-                path: 'user',
-                name: 'User',
-                component: () => import("@/views/User"),
-                meta: {
-                    requireAuth: true
-                }
 
-            },
-            {
-                path: 'product',
-                name: 'Product',
-                component: () => import("@/views/Product"),
-                meta: {
-                    requireAuth: true
-                }
 
-            }        ]
+            ]
     },
     {
         path: '/login',
         name: 'Login',
         component: () => import("@/views/Login")
     },
+    {
+        path: '/user',
+        name: 'User',
+        component: () => import("@/views/User"),
+        meta: {
+            requireAuth: true
+        }
+    },
+    {
+        path: '/game',
+        name: 'Game',
+        component: () => import("@/views/Game.vue"),
+        meta: {
+            requireAuth: true
+        }
+    }
     // {
     //     path: '/register',
     //     name: 'Register',

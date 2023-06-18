@@ -19,10 +19,38 @@
           </el-input>
         </el-form-item>
         <el-form-item style="margin-left: 40px;margin-right: 40px;">
+          <el-button style="width: 100%;font-size: 20px" type="primary" @click="register">注 册</el-button>
+        </el-form-item>
+        <el-form-item style="margin-left: 40px;margin-right: 40px;">
           <el-button style="width: 100%;font-size: 20px" type="primary" @click="login">登 录</el-button>
         </el-form-item>
       </el-form>
     </div>
+
+    <div>
+      <el-dialog
+          v-model="dialogVisible_register"
+          title="注册"
+          width="30%"
+      ><el-form :model="form" label-width="120px">
+        <el-form-item label="用户名" style="width: 80%">
+          <el-input v-model="form.name" />
+        </el-form-item>
+        <el-form-item label="密码" style="width: 80%">
+          <el-input v-model="form.password" />
+        </el-form-item>
+      </el-form>
+        <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisible_register = false">取消</el-button>
+        <el-button type="primary" @click="save"
+        >确定</el-button
+        >
+      </span>
+        </template>
+      </el-dialog>
+    </div>
+
   </div>
 </template>
 
@@ -40,6 +68,8 @@ export default {
   data() {
     return {
       form: {},
+      level: 2,
+      dialogVisible_register: false,
       rules: {
         name: [
           {
@@ -82,7 +112,11 @@ export default {
                 type: 'success'
               })
               sessionStorage.setItem("user",JSON.stringify(res.data)) //缓存用户信息
-              this.$router.push("/Product") // 页面跳转
+              this.level = res.data.level
+              if(this.level === 1)
+                this.$router.push("/User") // 页面跳转
+              else if(this.level === 2)
+                this.$router.push("/Game") // 页面跳转
             }else{
               ElMessage({
                 message: res.msg,
@@ -92,7 +126,48 @@ export default {
           })
         }
       })
-    }
+    },
+    register(){
+      this.dialogVisible_register=true
+    },
+    save(){
+      if(this.form.id){
+        request.put("/user",this.form).then(res => {
+          console.log(res)
+          if(res.code==="0"){
+            this.$message({
+              type:"success",
+              message:"更新成功"
+            })
+          }else {
+            this.$message({
+              type:"error",
+              message:res.msg
+            })
+          }
+          this.load()
+          this.dialogVisible_register=false
+        })
+      }else{
+        request.post("/user",this.form).then(res => {
+          console.log(res)
+          if(res.code==="0"){
+            this.$message({
+              type:"success",
+              message:"新增成功"
+            })
+          }else {
+            this.$message({
+              type:"error",
+              message:res.msg
+            })
+          }
+          this.load()
+          this.form = this.$options.data().form
+          this.dialogVisible2=false
+        })
+      }
+    },
   }
 }
 </script>
