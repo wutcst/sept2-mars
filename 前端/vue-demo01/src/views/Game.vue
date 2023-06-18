@@ -104,13 +104,14 @@ export default {
       total:10,
       search:'',
       tableData:[],
-      rooms:[{'name':'outside','id':1,'gold':'1','cost':'-1','descriptions':'outside the main entrance of the colossal cave','picture':'assets/images/outside.jpg'},
-        {'name':'theater','id':2,'gold':'2','cost':'-1','descriptions':'in a lecture theater','picture':'assets/images/theater.jpg'},
-        {'name':'pub','id':3,'gold':'4','cost':'-3','descriptions':'in the pub','picture':'assets/images/pub.jpg'},
-        {'name':'lab','id':4,'gold':'3','cost':'-2','descriptions':'in a computing lab','picture':'assets/images/lab.jpg'},
-        {'name':'treasure','id':5,'gold':'5','cost':'-1','descriptions':'in the treasure room, maybe there has some treasure','picture':'assets/images/treasure.jpg'},
-        {'name':'randomRoom','id':6,'gold':'0','cost':'0','descriptions':'in a randomRoom','picture':'assets/images/randomroom.jpg'},
-        {'name':'exit','id':7,'gold':'0','cost':'0','descriptions':'in the exit','picture':'assets/images/exit.jpg'}],
+      rooms:[{'name':'outside','id':1,'gold':'1','cost':'-1','descriptions':'outside the main entrance of the colossal cave','picture':'assets/images/outside.jpg','takeflag':0},
+        {'name':'theater','id':2,'gold':'2','cost':'-1','descriptions':'in a lecture theater','picture':'assets/images/theater.jpg','takeflag':0},
+        {'name':'pub','id':3,'gold':'4','cost':'-3','descriptions':'in the pub','picture':'assets/images/pub.jpg','takeflag':0},
+        {'name':'lab','id':4,'gold':'3','cost':'-2','descriptions':'in a computing lab','picture':'assets/images/lab.jpg','takeflag':0},
+        {'name':'treasure','id':5,'gold':'5','cost':'-1','descriptions':'in the treasure room, maybe there has some treasure','picture':'assets/images/treasure.jpg','takeflag':0},
+        {'name':'randomRoom','id':6,'gold':'0','cost':'0','descriptions':'in a randomRoom','picture':'assets/images/randomroom.jpg','takeflag':1},
+        {'name':'exit','id':7,'gold':'0','cost':'0','descriptions':'a way to leave this cave!','picture':'assets/images/exit.jpg','takeflag':0},
+        {'name':'corridor','id':8,'gold':'0','cost':'0','descriptions':'a long long corridor with cold wind','picture':'assets/images/corridor.jpg','takeflag':1}],
       items:[{'name':'cookie','id':1,'roomId':5,'descriptions':'增加5体力'},
         {'name':'key','id':2,'roomId':7,'descriptions':'通关的关键物品'}],
       location:'',
@@ -119,9 +120,8 @@ export default {
       descriptions:'',
       id:'',
       lastroom:'',
-      takeFlag:false,
       powerFlag:false,
-      maps:[[0,2,3], [4,6,5], [7,1,0]]
+      maps:[[1,2,3], [5,6,4], [8,7,0]]
     }
   },
   created() {
@@ -179,11 +179,17 @@ export default {
       })
     },
     take(){
-      if(this.takeFlag)
-        alert("您已经拿过了")
-      else{
-        this.takeFlag=true
-        // this.load()
+      let judgeFlag
+      let num
+      for(let index in this.rooms){
+        if(this.rooms[index].name === this.location){
+          judgeFlag=this.rooms[index].takeflag
+          num=index
+        }
+      }
+      if(judgeFlag==1) {
+        alert("房间内无物品可以拿取")
+      }else{
         let oldgold
         let oldcoin
         request.get("/user"
@@ -231,16 +237,15 @@ export default {
             }
             if(this.location==="exit"){
               this.dialogVisible3=true
-
             }
             this.load()
           })
         })
-
+        judgeFlag=1
+        this.rooms[num].takeflag=1
       }
     },
     west(){
-      this.takeFlag = false
       let id=this.id
       let x;
       let y;
@@ -310,8 +315,6 @@ export default {
 
     },
     east(){
-      this.takeFlag = false
-
       let id=this.id
       let x;
       let y;
@@ -382,8 +385,6 @@ export default {
 
     },
     north(){
-      this.takeFlag = false
-
       let id=this.id
       let x;
       let y;
@@ -455,7 +456,6 @@ export default {
 
     },
     south(){
-      this.takeFlag = false
 
       let id=this.id
       let x;
@@ -624,7 +624,6 @@ export default {
       this.reset()
     },
     reset(){
-      this.takeFlag=false
       request.get("/user"
       ).then(res=>{
         let user=JSON.parse(sessionStorage.getItem("user"))
@@ -655,6 +654,11 @@ export default {
           this.load()
         })
       })
+      for(let index in this.rooms){
+        this.rooms[index].takeflag=0
+      }
+      this.rooms[8].takeflag=1
+      this.rooms[6].takeflag=1
     }
   }
 }
