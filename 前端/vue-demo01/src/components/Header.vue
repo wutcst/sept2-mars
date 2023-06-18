@@ -8,7 +8,9 @@
     {{ user.name }}
 
       <el-icon class="el-icon--right">
+<!--
         <arrow-down />
+-->
       </el-icon>
     </span>
         <template #dropdown>
@@ -16,7 +18,7 @@
 <!--            <el-dropdown-item>个人信息</el-dropdown-item>-->
             <el-dropdown-item @click="logout">退出</el-dropdown-item>
             <el-dropdown-item  @click="get">金币：{{user2.gold}}</el-dropdown-item>
-            <el-dropdown-item  @click="get">硬币：{{user2.coin}}</el-dropdown-item>
+            <el-dropdown-item  @click="get">体力：{{user2.coin}}</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -65,7 +67,7 @@ export default {
 
 
 <style scoped>
-.demo-tabs > .el-tabs__content {
+.demo-tabs > {
   padding: 32px;
   color: #6b778c;
   font-size: 32px;

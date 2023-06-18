@@ -72,7 +72,7 @@
         <el-form-item label="金币" style="width: 80%">
           <el-input v-model="form.gold" />
         </el-form-item>
-        <el-form-item label="硬币" style="width: 80%">
+        <el-form-item label="体力" style="width: 80%">
           <el-input v-model="form.coin" />
         </el-form-item>
       </el-form>

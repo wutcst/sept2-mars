@@ -30,7 +30,7 @@
     <div>
       <el-dialog
           v-model="dialogVisible_register"
-          title="新增用户"
+          title="注册"
           width="30%"
       ><el-form :model="form" label-width="120px">
         <el-form-item label="用户名" style="width: 80%">
@@ -68,6 +68,7 @@ export default {
   data() {
     return {
       form: {},
+      level: 2,
       dialogVisible_register: false,
       rules: {
         name: [
@@ -111,9 +112,10 @@ export default {
                 type: 'success'
               })
               sessionStorage.setItem("user",JSON.stringify(res.data)) //缓存用户信息
-              if(this.form.name === 'admin')
+              this.level = res.data.level
+              if(this.level === 1)
                 this.$router.push("/User") // 页面跳转
-              else if(this.form.name !== 'admin')
+              else if(this.level === 2)
                 this.$router.push("/Game") // 页面跳转
             }else{
               ElMessage({
@@ -132,7 +134,7 @@ export default {
       if(this.form.id){
         request.put("/user",this.form).then(res => {
           console.log(res)
-          if(res.code=="0"){
+          if(res.code==="0"){
             this.$message({
               type:"success",
               message:"更新成功"
@@ -144,12 +146,12 @@ export default {
             })
           }
           this.load()
-          this.dialogVisible=false
+          this.dialogVisible_register=false
         })
       }else{
         request.post("/user",this.form).then(res => {
           console.log(res)
-          if(res.code=="0"){
+          if(res.code==="0"){
             this.$message({
               type:"success",
               message:"新增成功"
