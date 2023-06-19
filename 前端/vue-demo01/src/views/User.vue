@@ -5,15 +5,8 @@
 
   <div style="padding: 10px">
     <div style="margin: 10px 0 ;display: flex">
-<!--      <el-button type="primary" @click="open">游戏规则说明</el-button>-->
       <el-button type="primary" @click="adduser">新增用户</el-button>
-<!--      <el-button type="primary">导入</el-button>-->
-<!--      <el-button type="primary">导出</el-button>-->
     </div>
-<!--    <div style="margin: 10px 0 ;display: flex">-->
-<!--      <el-input v-model="search" placeholder="请输入内容" style="width: 20%" clearable/>-->
-<!--      <el-button type="primary" style="margin-left: 5px">查询</el-button>-->
-<!--    </div>-->
    <el-table :data="tableData" stripe style="width: 100%" border>
      <el-table-column prop="id" label="ID" width="170" sortable/>
      <el-table-column prop="name" label="用户名" width="220" />
@@ -79,9 +72,7 @@
       <template #footer>
       <span class="dialog-footer">
         <el-button @click="closeAddDialog">取消</el-button>
-        <el-button type="primary" @click="save"
-        >确定</el-button
-        >
+        <el-button type="primary" @click="save">确定</el-button>
       </span>
       </template>
     </el-dialog>
@@ -102,7 +93,7 @@
       <el-form-item label="金币" style="width: 80%">
         <el-input v-model="form.gold" />
       </el-form-item>
-      <el-form-item label="硬币" style="width: 80%">
+      <el-form-item label="体力" style="width: 80%">
         <el-input v-model="form.coin" />
       </el-form-item>
     </el-form>
@@ -128,10 +119,10 @@ export default {
   data(){
     return{
       form:{},
-      dialogVisible:false,
-      dialogVisible2:false,
-      currentPage:1,
-      pageSize:10,
+      dialogVisible:false, //修改用户信息窗口
+      dialogVisible2:false, //添加新用户窗口
+      currentPage:1, //当前页面
+      pageSize:10, //页面大小
       total:10,
       search:'',
       tableData:[]
@@ -141,13 +132,10 @@ export default {
     this.load()
   },
   methods:{
-    open(){
-      this.$notify({
-        title: '游戏规则说明',
-        message: '巨洞探险：一个精彩的、充满想像力的复杂游戏，包括要在一个复杂的洞穴系统中找到出路、寻找隐藏的财宝、使用暗语和其他一些神秘工具，最终的目的是获得高分。',
-        duration: 4500
-      });
-    },
+    /**
+     * @description 加载页面信息
+     * @return void
+     * */
     load(){
       request.get("/user?pageNum="+this.currentPage+"&pageSize="+this.pageSize+"&search="+this.search,
 
@@ -157,19 +145,34 @@ export default {
         this.total=res.data.records.length
       })
     },
+    /**
+     * @description 修改用户信息的窗口
+     * @return void
+     * */
     add(){
         this.dialogVisible=true
         this.form={}
     },
+    /**
+     * @description 添加新用户
+     * @return void
+     * */
     adduser(){
       this.dialogVisible2=true
     },
-    //清除对话框中的数据
+    /**
+     * @description 清楚对话框的数据
+     * @return void
+     * */
     closeAddDialog() {
       this.dialogVisible = false   //关闭对话框
       // this.$refs.addRoleForm.resetFields();
       this.form = this.$options.data().form
     },
+    /**
+     * @description 保存用户信息
+     * @return void
+     * */
     save(){
       if(this.form.id){
         request.put("/user",this.form).then(res => {
@@ -208,11 +211,18 @@ export default {
         })
       }
     },
-    // eslint-disable-next-line no-unused-vars
+    /**
+     * @description 修改用户信息
+     * @return void
+     * */
     handleEdit(row){
       this.form = JSON.parse(JSON.stringify(row))
       this.dialogVisible = true
     },
+    /**
+     * @description 删除用户
+     * @return void
+     * */
     handleDelete(id){
       request.delete("/user/"+id).then(res=>{
         if(res.code==="0"){

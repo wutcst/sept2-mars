@@ -5,7 +5,7 @@
     <!--    主体-->
     <div style="display: flex">
       <!--    侧边栏-->
-      <Side />
+<!--      <Side />-->
       <!--    内容区域-->
       <router-view  style="flex: 1"/>
     </div>
@@ -14,14 +14,14 @@
 
 <script>
 import Header from "@/components/Header";
-import Side from "@/components/Side";
+//import Side from "@/components/Side";
 export default {
   // eslint-disable-next-line vue/multi-word-component-names
   name: "Layout",
   components: {
     Header,
     // eslint-disable-next-line vue/no-unused-components
-    Side
+    //Side
   }
 }
 </script>

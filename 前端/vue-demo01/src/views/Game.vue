@@ -32,10 +32,10 @@
   </div>
   <div class="b">
       <el-row class="mb-4">
-        <el-button type="success" plain @click="west">WEST </el-button>
-        <el-button type="success" plain @click="east">EAST </el-button>
-        <el-button type="success" plain @click="north">NORTH</el-button>
-        <el-button type="success" plain @click="south">SOUTH</el-button>
+        <el-button type="success" plain @click="move(0,-1)">WEST </el-button>
+        <el-button type="success" plain @click="move(0,1)">EAST </el-button>
+        <el-button type="success" plain @click="move(-1,0)">NORTH</el-button>
+        <el-button type="success" plain @click="move(1,0)">SOUTH</el-button>
         <el-button type="success" plain @click="back">BACK</el-button>
         <el-button type="warning" plain @click="take">TAKE</el-button>
         <el-button type="primary" plain @click="open">rule</el-button>
@@ -75,13 +75,6 @@
       </el-dialog>
   </div>
 
-<!--  <el-empty-->
-<!--      image="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"-->
-<!--  >-->
-<!--  </el-empty>-->
-<!--  <div class="demo-image">-->
-<!--      <el-image style="width: 100px; height: 100px" :src="url" />-->
-<!--  </div>-->
 </template>
 
 <script>
@@ -104,30 +97,34 @@ export default {
       total:10,
       search:'',
       tableData:[],
-      rooms:[{'name':'outside','id':1,'gold':'1','cost':'-1','descriptions':'outside the main entrance of the colossal cave','picture':'assets/images/outside.jpg'},
-        {'name':'theater','id':2,'gold':'2','cost':'-1','descriptions':'in a lecture theater','picture':'assets/images/theater.jpg'},
-        {'name':'pub','id':3,'gold':'4','cost':'-3','descriptions':'in the pub','picture':'assets/images/pub.jpg'},
-        {'name':'lab','id':4,'gold':'3','cost':'-2','descriptions':'in a computing lab','picture':'assets/images/lab.jpg'},
-        {'name':'treasure','id':5,'gold':'5','cost':'-1','descriptions':'in the treasure room, maybe there has some treasure','picture':'assets/images/treasure.jpg'},
-        {'name':'randomRoom','id':6,'gold':'0','cost':'0','descriptions':'in a randomRoom','picture':'assets/images/randomroom.jpg'},
-        {'name':'exit','id':7,'gold':'0','cost':'0','descriptions':'in the exit','picture':'assets/images/exit.jpg'}],
+      rooms:[{'name':'outside','id':1,'gold':'1','cost':'-1','descriptions':'outside the main entrance of the colossal cave','picture':'assets/images/outside.jpg','takeflag':0},
+        {'name':'theater','id':2,'gold':'2','cost':'-1','descriptions':'in the theater ,Mysterious songs are scattered throughout the opera house','picture':'assets/images/theater.jpg','takeflag':0},
+        {'name':'pub','id':3,'gold':'4','cost':'-3','descriptions':'in the quiet bar, the clinking sound of wine glasses','picture':'assets/images/pub.jpg','takeflag':0},
+        {'name':'lab','id':4,'gold':'3','cost':'-2','descriptions':'in a scientific laboratory, only the sound of machines running','picture':'assets/images/lab.jpg','takeflag':0},
+        {'name':'treasure','id':5,'gold':'5','cost':'-1','descriptions':'in the treasure room, maybe there has some treasure','picture':'assets/images/treasure.jpg','takeflag':0},
+        {'name':'randomRoom','id':6,'gold':'0','cost':'0','descriptions':'in a random room,where do you want to go','picture':'assets/images/randomroom.jpg','takeflag':1},
+        {'name':'exit','id':7,'gold':'0','cost':'0','descriptions':'a way to leave this place!','picture':'assets/images/exit.jpg','takeflag':0},
+        {'name':'corridor','id':8,'gold':'0','cost':'0','descriptions':'a long long corridor with cold wind','picture':'assets/images/corridor.jpg','takeflag':1}],
       items:[{'name':'cookie','id':1,'roomId':5,'descriptions':'增加5体力'},
-        {'name':'key','id':2,'roomId':7,'descriptions':'通关的关键物品'}],
-      location:'',
-      gold:'',
-      cost:'',
-      descriptions:'',
-      id:'',
-      lastroom:'',
-      takeFlag:false,
-      powerFlag:false,
-      maps:[[0,2,3], [4,6,5], [7,1,0]]
+        {'name':'key','id':2,'roomId':7,'descriptions':'通关的关键物品'}], //物品设置
+      location:'', //当前位置
+      gold:'', //金币
+      cost:'', //体力消耗
+      descriptions:'', //房间描述
+      id:'', //房间id
+      lastroom:'', //上次房间信息
+      powerFlag:false, //玩家体力状态
+      maps:[[1,2,3], [5,6,4], [8,7,0]] //地图
     }
   },
   created() {
     this.load()
   },
   methods:{
+    /**
+     * @description 游戏规则说明
+     * @return void
+     * */
     open(){
       this.$notify({
         title: '游戏规则说明',
@@ -135,11 +132,21 @@ export default {
         duration: 4500
       });
     },
+    /**
+     * @description 获取随机数函数
+     * @param {int} min
+     * @param {int} max
+     * @return {int} 随机数值
+     * */
     getRandomInt1(min, max) {
       min = Math.ceil(min);
       max = Math.floor(max);
       return Math.floor(Math.random() * (max - min)) + min; //不含最大值，含最小值
      },
+    /**
+     * @description 加载页面信息
+     * @return void
+     * */
     load(){
       request.get("/user"
       ).then(res=>{
@@ -164,26 +171,47 @@ export default {
         }
         if(this.location==="randomRoom"){
           alert("您处于随机房间，将会被传送离开")
-          let a=this.getRandomInt1(1,5)
-          // alert(a)
-          if(a===1){
-            this.west()
-          }else if(a===2){
-            this.east()
-          }else if(a===3){
-            this.north()
-          }else if(a===4){
-            this.south()
-          }
+          this.portal()
         }
       })
     },
+    /**
+     * @description 传送至randomRoom四周任意房间
+     * @return void
+     * */
+    portal(){
+      let a=this.getRandomInt1(1,5)
+      switch (a){
+        case 1:
+          this.move(0,-1)
+          break;
+        case 2:
+          this.move(0,1)
+          break;
+        case 3:
+          this.move(-1,0)
+          break;
+        case 4:
+          this.move(1,0)
+          break;
+      }
+    },
+    /**
+     * @description 拿取房间内物品
+     * @return void
+     * */
     take(){
-      if(this.takeFlag)
-        alert("您已经拿过了")
-      else{
-        this.takeFlag=true
-        // this.load()
+      let judgeFlag
+      let num
+      for(let index in this.rooms){
+        if(this.rooms[index].name === this.location){
+          judgeFlag=this.rooms[index].takeflag
+          num=index
+        }
+      }
+      if(judgeFlag==1) {
+        alert("房间内无物品可以拿取")
+      }else{
         let oldgold
         let oldcoin
         request.get("/user"
@@ -195,8 +223,6 @@ export default {
               oldcoin=res.data.records[data].coin
             }
           }
-          // oldgold=res.data.records[0].gold
-          // oldcoin=res.data.records[0].coin
           let gold=(parseInt(oldgold)+parseInt(this.gold)).toString()
           let coin=(parseInt(oldcoin)+parseInt(this.cost)).toString()
 
@@ -211,7 +237,7 @@ export default {
                 return
               }else{
                 coin=(parseInt(coin)+5).toString()
-                mesage=mesage+" you get a"+this.items[index].name+"your power +5"
+                mesage=mesage+" you get a "+this.items[index].name+" your power +5"
               }
             }
           }
@@ -231,306 +257,18 @@ export default {
             }
             if(this.location==="exit"){
               this.dialogVisible3=true
-
             }
             this.load()
           })
         })
-
+        judgeFlag=1
+        this.rooms[num].takeflag=1
       }
     },
-    west(){
-      this.takeFlag = false
-      let id=this.id
-      let x;
-      let y;
-      for(let i=0;i<3;i++){
-        for(let j=0;j<3;j++){
-          if(this.maps[i][j]===id){
-            x=i;
-            y=j;
-          }
-        }
-      }
-      for(let index in this.rooms) {
-        if(x>=0&&y-1>=0&&x<=2&&y-1<=2&&this.maps[x][y-1]!==0){
-          let map = this.rooms[index]
-          if (map['id'] === this.maps[x][y]) {
-            this.lastroom = map['name']
-          }
-        }
-      }
-
-      y=y-1
-      if(x>=0&&y>=0&&x<=2&&y<=2&&this.maps[x][y]!==0){
-        for(let index in this.rooms){
-          let map=this.rooms[index]
-          if(map['id']===this.maps[x][y]){
-            this.location=map['name']
-            let oldgold
-            let oldcoin
-            request.get("/user"
-            ).then(res=>{
-              let user=JSON.parse(sessionStorage.getItem("user"))
-              for(let data in res.data.records){
-                if(res.data.records[data].id===user["id"]){
-                  oldgold=res.data.records[data].gold
-                  oldcoin=res.data.records[data].coin
-                }
-              }
-              oldcoin=(parseInt(oldcoin)-1).toString()
-              if(parseInt(oldcoin)<=0){
-                this.dialogVisible4=true
-              }else{
-
-                let data={"id":user["id"],"name":user["name"],"password":user["password"],"gender":user["gender"],"currentroom":this.location,"gold":oldgold,"coin":oldcoin,"lastroom":this.lastroom}
-                request.put("/user",data).then(res => {
-                  if(res.code==="0"){
-                    this.$message({
-                      type:"success",
-                      message:"成功"
-                    })
-                  }else {
-                    this.$message({
-                      type:"error",
-                      message:res.msg
-                    })
-                  }
-                  this.load()
-                })
-              }
-            })
-          }
-        }
-        // this.load()
-      }else {
-        alert("此路不通")
-      }
-
-
-    },
-    east(){
-      this.takeFlag = false
-
-      let id=this.id
-      let x;
-      let y;
-      for(let i=0;i<3;i++){
-        for(let j=0;j<3;j++){
-          if(this.maps[i][j]===id){
-            x=i;
-            y=j;
-          }
-        }
-      }
-      for(let index in this.rooms) {
-        if(x>=0&&y+1>=0&&x<=2&&y+1<=2&&this.maps[x][y+1]!==0){
-          let map = this.rooms[index]
-          if (map['id'] === this.maps[x][y]) {
-            this.lastroom = map['name']
-          }
-        }
-      }
-      y=y+1
-      if(x>=0&&y>=0&&x<=2&&y<=2&&this.maps[x][y]!==0){
-        for(let index in this.rooms){
-          let map=this.rooms[index]
-          if(map['id']===this.maps[x][y]){
-            // this.gold=map['gold']
-            // this.coin=map['coin']
-            // this.descriptions=map['descriptions']
-            this.location=map['name']
-            // this.id=map['id']
-            let oldgold
-            let oldcoin
-            request.get("/user"
-            ).then(res=>{
-              let user=JSON.parse(sessionStorage.getItem("user"))
-              for(let data in res.data.records){
-                if(res.data.records[data].id===user["id"]){
-                  oldgold=res.data.records[data].gold
-                  oldcoin=res.data.records[data].coin
-                }
-              }
-              oldcoin=(parseInt(oldcoin)-1).toString()
-              if(parseInt(oldcoin)<=0){
-                this.dialogVisible4=true
-              }else{
-                let data={"id":user["id"],"name":user["name"],"password":user["password"],"gender":user["gender"],"currentroom":this.location,"gold":oldgold,"coin":oldcoin,"lastroom":this.lastroom}
-                request.put("/user",data).then(res => {
-                  if(res.code==="0"){
-                    this.$message({
-                      type:"success",
-                      message:"成功"
-                    })
-                  }else {
-                    this.$message({
-                      type:"error",
-                      message:res.msg
-                    })
-                  }
-                  this.load()
-                })
-              }
-            })
-          }
-        }
-        // this.load()
-      }else {
-        alert("此路不通")
-      }
-
-    },
-    north(){
-      this.takeFlag = false
-
-      let id=this.id
-      let x;
-      let y;
-      for(let i=0;i<3;i++){
-        for(let j=0;j<3;j++){
-          if(this.maps[i][j]===id){
-            x=i;
-            y=j;
-          }
-        }
-      }
-      for(let index in this.rooms) {
-        if(x-1>=0&&y>=0&&x-1<=2&&y<=2&&this.maps[x-1][y]!==0){
-          let map = this.rooms[index]
-          if (map['id'] === this.maps[x][y]) {
-            this.lastroom = map['name']
-          }
-        }
-      }
-      x=x-1
-      if(x>=0&&y>=0&&x<=2&&y<=2&&this.maps[x][y]!==0){
-        for(let index in this.rooms){
-          let map=this.rooms[index]
-          if(map['id']===this.maps[x][y]){
-            // this.gold=map['gold']
-            // this.coin=map['coin']
-            // this.descriptions=map['descriptions']
-            this.location=map['name']
-            // this.id=map['id']
-            let oldgold
-            let oldcoin
-            request.get("/user"
-            ).then(res=>{
-              let user=JSON.parse(sessionStorage.getItem("user"))
-              for(let data in res.data.records){
-                if(res.data.records[data].id===user["id"]){
-                  oldgold=res.data.records[data].gold
-                  oldcoin=res.data.records[data].coin
-                }
-              }
-              oldcoin=(parseInt(oldcoin)-1).toString()
-              if(parseInt(oldcoin)<=0){
-                this.dialogVisible4=true
-              }else{
-                let data={"id":user["id"],"name":user["name"],"password":user["password"],"gender":user["gender"],"currentroom":this.location,"gold":oldgold,"coin":oldcoin,"lastroom":this.lastroom}
-                request.put("/user",data).then(res => {
-                  if(res.code==="0"){
-                    this.$message({
-                      type:"success",
-                      message:"成功"
-                    })
-                  }else {
-                    this.$message({
-                      type:"error",
-                      message:res.msg
-                    })
-                  }
-                  this.load()
-                })
-              }
-
-            })
-          }
-        }
-        // this.load()
-      }else {
-        alert("此路不通")
-      }
-
-    },
-    south(){
-      this.takeFlag = false
-
-      let id=this.id
-      let x;
-      let y;
-      for(let i=0;i<3;i++){
-        for(let j=0;j<3;j++){
-          if(this.maps[i][j]===id){
-            x=i;
-            y=j;
-          }
-        }
-      }
-      for(let index in this.rooms) {
-        if(x+1>=0&&y>=0&&x+1<=2&&y<=2&&this.maps[x+1][y]!==0){
-          let map = this.rooms[index]
-          if (map['id'] === this.maps[x][y]) {
-            this.lastroom = map['name']
-          }
-        }
-      }
-      x=x+1
-      if(x>=0&&y>=0&&x<=2&&y<=2&&this.maps[x][y]!==0){
-        for(let index in this.rooms){
-          let map=this.rooms[index]
-          if(map['id']===this.maps[x][y]){
-            // this.gold=map['gold']
-            // this.coin=map['coin']
-            // this.descriptions=map['descriptions']
-            this.location=map['name']
-            // this.id=map['id']
-            let oldgold
-            let oldcoin
-            request.get("/user"
-            ).then(res=>{
-              let user=JSON.parse(sessionStorage.getItem("user"))
-              for(let data in res.data.records){
-                if(res.data.records[data].id===user["id"]){
-                  oldgold=res.data.records[data].gold
-                  oldcoin=res.data.records[data].coin
-                }
-              }
-              oldcoin=(parseInt(oldcoin)-1).toString()
-              if(parseInt(oldcoin)<=0){
-                this.dialogVisible4=true
-              }else{
-                let data={"id":user["id"],"name":user["name"],"password":user["password"],"gender":user["gender"],"currentroom":this.location,"gold":oldgold,"coin":oldcoin,"lastroom":this.lastroom}
-                request.put("/user",data).then(res => {
-                  if(res.code==="0"){
-                    this.$message({
-                      type:"success",
-                      message:"成功"
-                    })
-                  }else {
-                    this.$message({
-                      type:"error",
-                      message:res.msg
-                    })
-                  }
-                  this.load()
-                })
-              }
-
-            })
-          }
-        }
-        // this.load()
-      }else {
-        alert("此路不通")
-      }
-
-    },
-    back(){
-      let lastroom = this.lastroom
-      this.lastroom=this.location
-      this.location=lastroom
+    /**
+     * @description 刷新用户信息
+     * */
+    refresh(){
       let oldgold
       let oldcoin
       request.get("/user"
@@ -542,27 +280,82 @@ export default {
             oldcoin=res.data.records[data].coin
           }
         }
-        let data={"id":user["id"],"name":user["name"],"password":user["password"],"gender":user["gender"],"currentroom":this.location,"gold":oldgold,"coin":oldcoin,"lastroom":this.lastroom}
-        request.put("/user",data).then(res => {
-          if(res.code==="0"){
-            this.$message({
-              type:"success",
-              message:"成功"
-            })
-          }else {
-            this.$message({
-              type:"error",
-              message:res.msg
-            })
-          }
-          this.load()
-        })
+        oldcoin=(parseInt(oldcoin)-1).toString()
+        if(parseInt(oldcoin)<=0){//体力不足
+          this.dialogVisible4=true
+        }else{
+          let data={"id":user["id"],"name":user["name"],"password":user["password"],"gender":user["gender"],"currentroom":this.location,"gold":oldgold,"coin":oldcoin,"lastroom":this.lastroom}
+          request.put("/user",data).then(res => {
+            if(res.code==="0"){
+              this.$message({
+                type:"success",
+                message:"成功"
+              })
+            }else {
+              this.$message({
+                type:"error",
+                message:res.msg
+              })
+            }
+            this.load()
+          })
+        }
       })
     },
-    add(){
-      this.dialogVisible=true
-      this.form={}
+    /**
+     * @description 玩家移动
+     * @param {int} deltaX 表示南北方向的移动
+     * @param {int} deltaY 表示东西方向的移动
+     * @return void
+     * */
+    move(deltaX,deltaY){
+     let id=this.id
+     let x;
+     let y;
+     for(let i=0;i<3;i++){
+       for(let j=0;j<3;j++){
+         if(this.maps[i][j]===id){
+           x=i;
+           y=j;
+         }
+       }
+     }
+     for(let index in this.rooms) {
+       if(x>=0&&y-1>=0&&x<=2&&y-1<=2&&this.maps[x][y-1]!==0){
+         let map = this.rooms[index]
+         if (map['id'] === this.maps[x][y]) {
+           this.lastroom = map['name']
+         }
+       }
+     }
+     let newX=x+deltaX
+     let newY=y+deltaY
+     if(newX>=0&&newY>=0&&newX<=2&&newY<=2&&this.maps[newX][newY]!==0){
+       for(let index in this.rooms){
+         let map=this.rooms[index]
+         if(map['id']===this.maps[newX][newY]){
+           this.location=map['name']
+           this.refresh()
+         }
+       }
+     }else {
+       alert("此路不通")
+     }
     },
+    /**
+     * @description 返回上一房间
+     * @return void
+     * */
+    back(){
+      let lastroom = this.lastroom
+      this.lastroom=this.location
+      this.location=lastroom
+      this.refresh()
+    },
+    /**
+     * @description 保存状态信息
+     * @return void
+     * */
     save(){
       if(this.form.id){
         request.put("/user",this.form).then(res => {
@@ -584,47 +377,27 @@ export default {
       }
     },
     // eslint-disable-next-line no-unused-vars
-    handleEdit(row){
-      this.form = JSON.parse(JSON.stringify(row))
-      this.dialogVisible = true
-    },
-    handleEdit2(){
-      this.dialogVisible2 = true
-    },
-    handleDelete(id){
-      request.delete("/product/"+id).then(res=>{
-        if(res.code==="0"){
-          this.$message({
-            type:"success",
-            message:"删除成功"
-          })
-        }else {
-          this.$message({
-            type:"error",
-            message:res.msg
-          })
-        }
-        this.load()
-      })
-    },
-    handleSizeChange(pageSize){
-      this.pageSize=pageSize
-      this.load()
-    },
-    handleCurrentChange(pageNum){
-      this.currentPage=pageNum
-      this.load()
-    },
+    /**
+     * @description 游戏胜利
+     * @return void
+     * */
     gameWin(){
       this.dialogVisible3 = false
       this.reset()
     },
+    /**
+     * @description 游戏结束（未获胜）
+     * @return void
+     * */
     gameOver(){
       this.dialogVisible4 = false
       this.reset()
     },
+    /**
+     * @description 重置玩家状态
+     * @return void
+     * */
     reset(){
-      this.takeFlag=false
       request.get("/user"
       ).then(res=>{
         let user=JSON.parse(sessionStorage.getItem("user"))
@@ -655,6 +428,11 @@ export default {
           this.load()
         })
       })
+      for(let index in this.rooms){
+        this.rooms[index].takeflag=0
+      }
+      this.rooms[8].takeflag=1
+      this.rooms[6].takeflag=1
     }
   }
 }

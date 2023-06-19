@@ -1,7 +1,7 @@
 <template>
-  <div style="width: 100%;height: 100vh; background-color: lightskyblue; overflow: hidden">
+  <div style="width: 100%;height: 100vh; background-color: lightblue; overflow: hidden" >
     <div style="width: 400px;margin: 150px auto">
-      <div style="color: aliceblue;font-size: 30px; text-align: center;padding: 30px 0">欢迎登录</div>
+      <div style="color: black;font-size: 25px; text-align: center;padding: 30px 0">欢迎登录巨洞探险游戏</div>
       <el-form ref="form" :model="form" label-width="40px" :rules="rules">
         <el-form-item prop="name" style="margin-left: 40px;margin-right: 40px;">
           <el-input placeholder="请输入用户名" v-model="form.name">
@@ -92,9 +92,9 @@ export default {
           }
           ,
           {
-            min: 1,
-            max: 10,
-            message: '长度在六到八位之间',
+            min: 3,
+            max: 8,
+            message: '长度在3到8位之间',
             trigger: 'blur',
           },
         ]
@@ -102,6 +102,10 @@ export default {
     }
   },
   methods: {
+    /**
+     * @description 登录功能
+     * @return void
+     * */
     login() {
       this.$refs["form"].validate((valid) => {
         if (valid) {
@@ -127,9 +131,17 @@ export default {
         }
       })
     },
+    /**
+     * @description 注册功能
+     * @return void
+     * */
     register(){
       this.dialogVisible_register=true
     },
+    /**
+     * @description 保存用户信息
+     * @return void
+     * */
     save(){
       if(this.form.id){
         request.put("/user",this.form).then(res => {
