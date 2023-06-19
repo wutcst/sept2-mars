@@ -15,8 +15,8 @@
           <el-dropdown-menu>
 <!--            <el-dropdown-item>个人信息</el-dropdown-item>-->
             <el-dropdown-item @click="logout">退出</el-dropdown-item>
-            <el-dropdown-item  @click="get">金币：{{user2.gold}}</el-dropdown-item>
-            <el-dropdown-item  @click="get">硬币：{{user2.coin}}</el-dropdown-item>
+            <el-dropdown-item  @click="get">金币{{user2.gold}}</el-dropdown-item>
+            <el-dropdown-item  @click="get">硬币{{user2.coin}}</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
