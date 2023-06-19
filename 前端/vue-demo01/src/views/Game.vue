@@ -32,10 +32,10 @@
   </div>
   <div class="b">
       <el-row class="mb-4">
-        <el-button type="success" plain @click="west">WEST </el-button>
-        <el-button type="success" plain @click="east">EAST </el-button>
-        <el-button type="success" plain @click="north">NORTH</el-button>
-        <el-button type="success" plain @click="south">SOUTH</el-button>
+        <el-button type="success" plain @click="move(0,-1)">WEST </el-button>
+        <el-button type="success" plain @click="move(0,1)">EAST </el-button>
+        <el-button type="success" plain @click="move(-1,0)">NORTH</el-button>
+        <el-button type="success" plain @click="move(1,0)">SOUTH</el-button>
         <el-button type="success" plain @click="back">BACK</el-button>
         <el-button type="warning" plain @click="take">TAKE</el-button>
         <el-button type="primary" plain @click="open">rule</el-button>
@@ -75,13 +75,6 @@
       </el-dialog>
   </div>
 
-<!--  <el-empty-->
-<!--      image="https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png"-->
-<!--  >-->
-<!--  </el-empty>-->
-<!--  <div class="demo-image">-->
-<!--      <el-image style="width: 100px; height: 100px" :src="url" />-->
-<!--  </div>-->
 </template>
 
 <script>
@@ -164,19 +157,26 @@ export default {
         }
         if(this.location==="randomRoom"){
           alert("您处于随机房间，将会被传送离开")
-          let a=this.getRandomInt1(1,5)
-          // alert(a)
-          if(a===1){
-            this.west()
-          }else if(a===2){
-            this.east()
-          }else if(a===3){
-            this.north()
-          }else if(a===4){
-            this.south()
-          }
+          this.portal()
         }
       })
+    },
+    portal(){
+      let a=this.getRandomInt1(1,5)
+      switch (a){
+        case 1:
+          this.move(0,-1)
+          break;
+        case 2:
+          this.move(0,1)
+          break;
+        case 3:
+          this.move(-1,0)
+          break;
+        case 4:
+          this.move(1,0)
+          break;
+      }
     },
     take(){
       let judgeFlag
@@ -245,293 +245,112 @@ export default {
         this.rooms[num].takeflag=1
       }
     },
-    west(){
-      let id=this.id
-      let x;
-      let y;
-      for(let i=0;i<3;i++){
-        for(let j=0;j<3;j++){
-          if(this.maps[i][j]===id){
-            x=i;
-            y=j;
+    refresh(){
+      let oldgold
+      let oldcoin
+      request.get("/user"
+      ).then(res=>{
+        let user=JSON.parse(sessionStorage.getItem("user"))
+        for(let data in res.data.records){
+          if(res.data.records[data].id===user["id"]){
+            oldgold=res.data.records[data].gold
+            oldcoin=res.data.records[data].coin
           }
         }
-      }
-      for(let index in this.rooms) {
-        if(x>=0&&y-1>=0&&x<=2&&y-1<=2&&this.maps[x][y-1]!==0){
-          let map = this.rooms[index]
-          if (map['id'] === this.maps[x][y]) {
-            this.lastroom = map['name']
-          }
+        oldcoin=(parseInt(oldcoin)-1).toString()
+        if(parseInt(oldcoin)<=0){
+          this.dialogVisible4=true
+        }else{
+          let data={"id":user["id"],"name":user["name"],"password":user["password"],"gender":user["gender"],"currentroom":this.location,"gold":oldgold,"coin":oldcoin,"lastroom":this.lastroom}
+          request.put("/user",data).then(res => {
+            if(res.code==="0"){
+              this.$message({
+                type:"success",
+                message:"成功"
+              })
+            }else {
+              this.$message({
+                type:"error",
+                message:res.msg
+              })
+            }
+            this.load()
+          })
         }
-      }
-
-      y=y-1
-      if(x>=0&&y>=0&&x<=2&&y<=2&&this.maps[x][y]!==0){
-        for(let index in this.rooms){
-          let map=this.rooms[index]
-          if(map['id']===this.maps[x][y]){
-            this.location=map['name']
-            let oldgold
-            let oldcoin
-            request.get("/user"
-            ).then(res=>{
-              let user=JSON.parse(sessionStorage.getItem("user"))
-              for(let data in res.data.records){
-                if(res.data.records[data].id===user["id"]){
-                  oldgold=res.data.records[data].gold
-                  oldcoin=res.data.records[data].coin
-                }
-              }
-              oldcoin=(parseInt(oldcoin)-1).toString()
-              if(parseInt(oldcoin)<=0){
-                this.dialogVisible4=true
-              }else{
-
-                let data={"id":user["id"],"name":user["name"],"password":user["password"],"gender":user["gender"],"currentroom":this.location,"gold":oldgold,"coin":oldcoin,"lastroom":this.lastroom}
-                request.put("/user",data).then(res => {
-                  if(res.code==="0"){
-                    this.$message({
-                      type:"success",
-                      message:"成功"
-                    })
-                  }else {
-                    this.$message({
-                      type:"error",
-                      message:res.msg
-                    })
-                  }
-                  this.load()
-                })
-              }
-            })
-          }
-        }
-        // this.load()
-      }else {
-        alert("此路不通")
-      }
-
-
+      })
     },
-    east(){
-      let id=this.id
-      let x;
-      let y;
-      for(let i=0;i<3;i++){
-        for(let j=0;j<3;j++){
-          if(this.maps[i][j]===id){
-            x=i;
-            y=j;
-          }
-        }
-      }
-      for(let index in this.rooms) {
-        if(x>=0&&y+1>=0&&x<=2&&y+1<=2&&this.maps[x][y+1]!==0){
-          let map = this.rooms[index]
-          if (map['id'] === this.maps[x][y]) {
-            this.lastroom = map['name']
-          }
-        }
-      }
-      y=y+1
-      if(x>=0&&y>=0&&x<=2&&y<=2&&this.maps[x][y]!==0){
-        for(let index in this.rooms){
-          let map=this.rooms[index]
-          if(map['id']===this.maps[x][y]){
-            // this.gold=map['gold']
-            // this.coin=map['coin']
-            // this.descriptions=map['descriptions']
-            this.location=map['name']
-            // this.id=map['id']
-            let oldgold
-            let oldcoin
-            request.get("/user"
-            ).then(res=>{
-              let user=JSON.parse(sessionStorage.getItem("user"))
-              for(let data in res.data.records){
-                if(res.data.records[data].id===user["id"]){
-                  oldgold=res.data.records[data].gold
-                  oldcoin=res.data.records[data].coin
-                }
-              }
-              oldcoin=(parseInt(oldcoin)-1).toString()
-              if(parseInt(oldcoin)<=0){
-                this.dialogVisible4=true
-              }else{
-                let data={"id":user["id"],"name":user["name"],"password":user["password"],"gender":user["gender"],"currentroom":this.location,"gold":oldgold,"coin":oldcoin,"lastroom":this.lastroom}
-                request.put("/user",data).then(res => {
-                  if(res.code==="0"){
-                    this.$message({
-                      type:"success",
-                      message:"成功"
-                    })
-                  }else {
-                    this.$message({
-                      type:"error",
-                      message:res.msg
-                    })
-                  }
-                  this.load()
-                })
-              }
-            })
-          }
-        }
-        // this.load()
-      }else {
-        alert("此路不通")
-      }
-
-    },
-    north(){
-      let id=this.id
-      let x;
-      let y;
-      for(let i=0;i<3;i++){
-        for(let j=0;j<3;j++){
-          if(this.maps[i][j]===id){
-            x=i;
-            y=j;
-          }
-        }
-      }
-      for(let index in this.rooms) {
-        if(x-1>=0&&y>=0&&x-1<=2&&y<=2&&this.maps[x-1][y]!==0){
-          let map = this.rooms[index]
-          if (map['id'] === this.maps[x][y]) {
-            this.lastroom = map['name']
-          }
-        }
-      }
-      x=x-1
-      if(x>=0&&y>=0&&x<=2&&y<=2&&this.maps[x][y]!==0){
-        for(let index in this.rooms){
-          let map=this.rooms[index]
-          if(map['id']===this.maps[x][y]){
-            // this.gold=map['gold']
-            // this.coin=map['coin']
-            // this.descriptions=map['descriptions']
-            this.location=map['name']
-            // this.id=map['id']
-            let oldgold
-            let oldcoin
-            request.get("/user"
-            ).then(res=>{
-              let user=JSON.parse(sessionStorage.getItem("user"))
-              for(let data in res.data.records){
-                if(res.data.records[data].id===user["id"]){
-                  oldgold=res.data.records[data].gold
-                  oldcoin=res.data.records[data].coin
-                }
-              }
-              oldcoin=(parseInt(oldcoin)-1).toString()
-              if(parseInt(oldcoin)<=0){
-                this.dialogVisible4=true
-              }else{
-                let data={"id":user["id"],"name":user["name"],"password":user["password"],"gender":user["gender"],"currentroom":this.location,"gold":oldgold,"coin":oldcoin,"lastroom":this.lastroom}
-                request.put("/user",data).then(res => {
-                  if(res.code==="0"){
-                    this.$message({
-                      type:"success",
-                      message:"成功"
-                    })
-                  }else {
-                    this.$message({
-                      type:"error",
-                      message:res.msg
-                    })
-                  }
-                  this.load()
-                })
-              }
-
-            })
-          }
-        }
-        // this.load()
-      }else {
-        alert("此路不通")
-      }
-
-    },
-    south(){
-
-      let id=this.id
-      let x;
-      let y;
-      for(let i=0;i<3;i++){
-        for(let j=0;j<3;j++){
-          if(this.maps[i][j]===id){
-            x=i;
-            y=j;
-          }
-        }
-      }
-      for(let index in this.rooms) {
-        if(x+1>=0&&y>=0&&x+1<=2&&y<=2&&this.maps[x+1][y]!==0){
-          let map = this.rooms[index]
-          if (map['id'] === this.maps[x][y]) {
-            this.lastroom = map['name']
-          }
-        }
-      }
-      x=x+1
-      if(x>=0&&y>=0&&x<=2&&y<=2&&this.maps[x][y]!==0){
-        for(let index in this.rooms){
-          let map=this.rooms[index]
-          if(map['id']===this.maps[x][y]){
-            // this.gold=map['gold']
-            // this.coin=map['coin']
-            // this.descriptions=map['descriptions']
-            this.location=map['name']
-            // this.id=map['id']
-            let oldgold
-            let oldcoin
-            request.get("/user"
-            ).then(res=>{
-              let user=JSON.parse(sessionStorage.getItem("user"))
-              for(let data in res.data.records){
-                if(res.data.records[data].id===user["id"]){
-                  oldgold=res.data.records[data].gold
-                  oldcoin=res.data.records[data].coin
-                }
-              }
-              oldcoin=(parseInt(oldcoin)-1).toString()
-              if(parseInt(oldcoin)<=0){
-                this.dialogVisible4=true
-              }else{
-                let data={"id":user["id"],"name":user["name"],"password":user["password"],"gender":user["gender"],"currentroom":this.location,"gold":oldgold,"coin":oldcoin,"lastroom":this.lastroom}
-                request.put("/user",data).then(res => {
-                  if(res.code==="0"){
-                    this.$message({
-                      type:"success",
-                      message:"成功"
-                    })
-                  }else {
-                    this.$message({
-                      type:"error",
-                      message:res.msg
-                    })
-                  }
-                  this.load()
-                })
-              }
-
-            })
-          }
-        }
-        // this.load()
-      }else {
-        alert("此路不通")
-      }
-
+    move(deltaX,deltaY){
+     let id=this.id
+     let x;
+     let y;
+     for(let i=0;i<3;i++){
+       for(let j=0;j<3;j++){
+         if(this.maps[i][j]===id){
+           x=i;
+           y=j;
+         }
+       }
+     }
+     for(let index in this.rooms) {
+       if(x>=0&&y-1>=0&&x<=2&&y-1<=2&&this.maps[x][y-1]!==0){
+         let map = this.rooms[index]
+         if (map['id'] === this.maps[x][y]) {
+           this.lastroom = map['name']
+         }
+       }
+     }
+     let newX=x+deltaX
+     let newY=y+deltaY
+     if(newX>=0&&newY>=0&&newX<=2&&newY<=2&&this.maps[newX][newY]!==0){
+       for(let index in this.rooms){
+         let map=this.rooms[index]
+         if(map['id']===this.maps[newX][newY]){
+           this.location=map['name']
+           this.refresh()
+           /*let oldgold
+           let oldcoin
+           request.get("/user"
+           ).then(res=>{
+             let user=JSON.parse(sessionStorage.getItem("user"))
+             for(let data in res.data.records){
+               if(res.data.records[data].id===user["id"]){
+                 oldgold=res.data.records[data].gold
+                 oldcoin=res.data.records[data].coin
+               }
+             }
+             oldcoin=(parseInt(oldcoin)-1).toString()
+             if(parseInt(oldcoin)<=0){
+               this.dialogVisible4=true
+             }else{
+               let data={"id":user["id"],"name":user["name"],"password":user["password"],"gender":user["gender"],"currentroom":this.location,"gold":oldgold,"coin":oldcoin,"lastroom":this.lastroom}
+               request.put("/user",data).then(res => {
+                 if(res.code==="0"){
+                   this.$message({
+                     type:"success",
+                     message:"成功"
+                   })
+                 }else {
+                   this.$message({
+                     type:"error",
+                     message:res.msg
+                   })
+                 }
+                 this.load()
+               })
+             }
+           })*/
+         }
+       }
+     }else {
+       alert("此路不通")
+     }
     },
     back(){
       let lastroom = this.lastroom
       this.lastroom=this.location
       this.location=lastroom
-      let oldgold
+      this.refresh()
+      /*let oldgold
       let oldcoin
       request.get("/user"
       ).then(res=>{
@@ -557,7 +376,7 @@ export default {
           }
           this.load()
         })
-      })
+      })*/
     },
     add(){
       this.dialogVisible=true

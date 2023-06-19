@@ -2,6 +2,13 @@
   <div style="height: 50px;line-height: 50px;border-bottom: 1px solid #ccc;display: flex">
     <div style="width: 200px;padding-left: 30px;font-weight: bold;color: dodgerblue">迷宫小游戏</div>
     <div style="flex: 1"></div>
+      <div>
+        <el-button @click="get">金币：{{user2.gold}}</el-button>
+        <el-button @click="get">体力：{{user2.coin}}</el-button>
+      </div>
+      <div style="padding-left: 10px; padding-top:10px">
+        <el-avatar shape="square" :size="30" :fit="'fill'" :src="'https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg'"></el-avatar>
+      </div>
     <div style="width: 120px">
       <el-dropdown style="padding-top: 20px">
     <span class="el-dropdown-link">
@@ -14,12 +21,10 @@
       </el-icon>
     </span>
         <template #dropdown>
-          <el-dropdown-menu>
-<!--            <el-dropdown-item>个人信息</el-dropdown-item>-->
+        <el-dropdown-menu>
             <el-dropdown-item @click="logout">退出</el-dropdown-item>
-            <el-dropdown-item  @click="get">金币：{{user2.gold}}</el-dropdown-item>
-            <el-dropdown-item  @click="get">体力：{{user2.coin}}</el-dropdown-item>
-          </el-dropdown-menu>
+       </el-dropdown-menu>
+
         </template>
       </el-dropdown>
      </div>

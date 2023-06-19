@@ -79,9 +79,7 @@
       <template #footer>
       <span class="dialog-footer">
         <el-button @click="closeAddDialog">取消</el-button>
-        <el-button type="primary" @click="save"
-        >确定</el-button
-        >
+        <el-button type="primary" @click="save">确定</el-button>
       </span>
       </template>
     </el-dialog>
@@ -144,7 +142,7 @@ export default {
     open(){
       this.$notify({
         title: '游戏规则说明',
-        message: '巨洞探险：一个精彩的、充满想像力的复杂游戏，包括要在一个复杂的洞穴系统中找到出路、寻找隐藏的财宝、使用暗语和其他一些神秘工具，最终的目的是获得高分。',
+        message: '巨洞探险：一个精彩的、充满想像力的复杂游戏，包括要在一个复杂的洞穴系统中找到出路、寻找隐藏的财宝、使用暗语和其他一些神秘工具，最终的目的是找到出口取得游戏胜利。',
         duration: 4500
       });
     },
