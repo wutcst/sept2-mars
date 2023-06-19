@@ -16,7 +16,7 @@ export default {
 </script>
 
 <style>
-.q{
+/*.q{
   display: flex;
   justify-content: left;
 }
@@ -31,5 +31,5 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-}
+}*/
 </style>
