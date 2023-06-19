@@ -303,45 +303,60 @@ export default {
       })
     },
     /**
-     * @description 玩家移动
+     * @description 获取当前地图上玩家所处的位置
+     * @return {array} 玩家所处的位置坐标数组，例如 [x, y]，x 表示行，y 表示列
+     **/
+    getPlayerPosition() {
+      for(let i = 0; i < 3; i++) {
+        for(let j = 0; j < 3; j++) {
+          if(this.maps[i][j] === this.id) {
+            return [i, j];
+          }
+        }
+      }
+    },
+
+    /**
+     * @description 判断新位置是否有效
+     * @param {array} newPosition 新位置的坐标数组，例如 [x, y]，x 表示行，y 表示列
+     * @return {boolean} 若新位置有效则返回 true，否则返回 false
+     **/
+    isValidPosition(newPosition) {
+      const [x, y] = newPosition;
+      return x >= 0 && y >= 0 && x <= 2 && y <= 2 && this.maps[x][y] !== 0;
+    },
+
+    /**
+     * @description 根据新位置更新玩家状态
+     * @param {array} newPosition 新位置的坐标数组，例如 [x, y]，x 表示行，y 表示列
+     * @return void
+     **/
+    updatePlayerStatus(newPosition) {
+      for(let index in this.rooms) {
+        let map=this.rooms[index]
+        if(map['id']===this.maps[newPosition[0]][newPosition[1]]){
+          this.location=map['name']
+          this.refresh()
+        }
+      }
+    },
+
+    /**
+     * @description 移动玩家到新位置
      * @param {int} deltaX 表示南北方向的移动
      * @param {int} deltaY 表示东西方向的移动
      * @return void
-     * */
-    move(deltaX,deltaY){
-     let id=this.id
-     let x;
-     let y;
-     for(let i=0;i<3;i++){
-       for(let j=0;j<3;j++){
-         if(this.maps[i][j]===id){
-           x=i;
-           y=j;
-         }
-       }
-     }
-     for(let index in this.rooms) {
-       if(x>=0&&y-1>=0&&x<=2&&y-1<=2&&this.maps[x][y-1]!==0){
-         let map = this.rooms[index]
-         if (map['id'] === this.maps[x][y]) {
-           this.lastroom = map['name']
-         }
-       }
-     }
-     let newX=x+deltaX
-     let newY=y+deltaY
-     if(newX>=0&&newY>=0&&newX<=2&&newY<=2&&this.maps[newX][newY]!==0){
-       for(let index in this.rooms){
-         let map=this.rooms[index]
-         if(map['id']===this.maps[newX][newY]){
-           this.location=map['name']
-           this.refresh()
-         }
-       }
-     }else {
-       alert("此路不通")
-     }
+     **/
+    move(deltaX, deltaY) {
+      const [x, y] = this.getPlayerPosition();
+      const newPosition = [x + deltaX, y + deltaY];
+      if (this.isValidPosition(newPosition)) {
+        this.updatePlayerStatus(newPosition);
+      } else {
+        alert("此路不通");
+      }
     },
+
     /**
      * @description 返回上一房间
      * @return void
