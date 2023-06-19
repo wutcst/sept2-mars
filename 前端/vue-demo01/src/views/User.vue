@@ -5,10 +5,7 @@
 
   <div style="padding: 10px">
     <div style="margin: 10px 0 ;display: flex">
-<!--      <el-button type="primary" @click="open">游戏规则说明</el-button>-->
       <el-button type="primary" @click="adduser">新增用户</el-button>
-<!--      <el-button type="primary">导入</el-button>-->
-<!--      <el-button type="primary">导出</el-button>-->
     </div>
 <!--    <div style="margin: 10px 0 ;display: flex">-->
 <!--      <el-input v-model="search" placeholder="请输入内容" style="width: 20%" clearable/>-->
@@ -100,7 +97,7 @@
       <el-form-item label="金币" style="width: 80%">
         <el-input v-model="form.gold" />
       </el-form-item>
-      <el-form-item label="硬币" style="width: 80%">
+      <el-form-item label="体力" style="width: 80%">
         <el-input v-model="form.coin" />
       </el-form-item>
     </el-form>
@@ -139,13 +136,6 @@ export default {
     this.load()
   },
   methods:{
-    open(){
-      this.$notify({
-        title: '游戏规则说明',
-        message: '巨洞探险：一个精彩的、充满想像力的复杂游戏，包括要在一个复杂的洞穴系统中找到出路、寻找隐藏的财宝、使用暗语和其他一些神秘工具，最终的目的是找到出口取得游戏胜利。',
-        duration: 4500
-      });
-    },
     load(){
       request.get("/user?pageNum="+this.currentPage+"&pageSize="+this.pageSize+"&search="+this.search,
 

@@ -1,6 +1,6 @@
 <template>
   <div style="height: 50px;line-height: 50px;border-bottom: 1px solid #ccc;display: flex">
-    <div style="width: 200px;padding-left: 30px;font-weight: bold;color: dodgerblue">迷宫小游戏</div>
+    <div style="width: 200px;padding-left: 30px;font-weight: bold;color: dodgerblue">迷宫小游戏-巨洞探险</div>
     <div style="flex: 1"></div>
       <div>
         <el-button @click="get">金币：{{user2.gold}}</el-button>

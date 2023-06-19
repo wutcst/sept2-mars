@@ -102,7 +102,7 @@ export default {
         {'name':'pub','id':3,'gold':'4','cost':'-3','descriptions':'in the pub','picture':'assets/images/pub.jpg','takeflag':0},
         {'name':'lab','id':4,'gold':'3','cost':'-2','descriptions':'in a computing lab','picture':'assets/images/lab.jpg','takeflag':0},
         {'name':'treasure','id':5,'gold':'5','cost':'-1','descriptions':'in the treasure room, maybe there has some treasure','picture':'assets/images/treasure.jpg','takeflag':0},
-        {'name':'randomRoom','id':6,'gold':'0','cost':'0','descriptions':'in a randomRoom','picture':'assets/images/randomroom.jpg','takeflag':1},
+        {'name':'randomRoom','id':6,'gold':'0','cost':'0','descriptions':'in a random room','picture':'assets/images/randomroom.jpg','takeflag':1},
         {'name':'exit','id':7,'gold':'0','cost':'0','descriptions':'a way to leave this cave!','picture':'assets/images/exit.jpg','takeflag':0},
         {'name':'corridor','id':8,'gold':'0','cost':'0','descriptions':'a long long corridor with cold wind','picture':'assets/images/corridor.jpg','takeflag':1}],
       items:[{'name':'cookie','id':1,'roomId':5,'descriptions':'增加5体力'},
@@ -201,8 +201,6 @@ export default {
               oldcoin=res.data.records[data].coin
             }
           }
-          // oldgold=res.data.records[0].gold
-          // oldcoin=res.data.records[0].coin
           let gold=(parseInt(oldgold)+parseInt(this.gold)).toString()
           let coin=(parseInt(oldcoin)+parseInt(this.cost)).toString()
 
@@ -258,7 +256,7 @@ export default {
           }
         }
         oldcoin=(parseInt(oldcoin)-1).toString()
-        if(parseInt(oldcoin)<=0){
+        if(parseInt(oldcoin)<=0){//体力不足
           this.dialogVisible4=true
         }else{
           let data={"id":user["id"],"name":user["name"],"password":user["password"],"gender":user["gender"],"currentroom":this.location,"gold":oldgold,"coin":oldcoin,"lastroom":this.lastroom}
@@ -307,38 +305,6 @@ export default {
          if(map['id']===this.maps[newX][newY]){
            this.location=map['name']
            this.refresh()
-           /*let oldgold
-           let oldcoin
-           request.get("/user"
-           ).then(res=>{
-             let user=JSON.parse(sessionStorage.getItem("user"))
-             for(let data in res.data.records){
-               if(res.data.records[data].id===user["id"]){
-                 oldgold=res.data.records[data].gold
-                 oldcoin=res.data.records[data].coin
-               }
-             }
-             oldcoin=(parseInt(oldcoin)-1).toString()
-             if(parseInt(oldcoin)<=0){
-               this.dialogVisible4=true
-             }else{
-               let data={"id":user["id"],"name":user["name"],"password":user["password"],"gender":user["gender"],"currentroom":this.location,"gold":oldgold,"coin":oldcoin,"lastroom":this.lastroom}
-               request.put("/user",data).then(res => {
-                 if(res.code==="0"){
-                   this.$message({
-                     type:"success",
-                     message:"成功"
-                   })
-                 }else {
-                   this.$message({
-                     type:"error",
-                     message:res.msg
-                   })
-                 }
-                 this.load()
-               })
-             }
-           })*/
          }
        }
      }else {
@@ -350,33 +316,6 @@ export default {
       this.lastroom=this.location
       this.location=lastroom
       this.refresh()
-      /*let oldgold
-      let oldcoin
-      request.get("/user"
-      ).then(res=>{
-        let user=JSON.parse(sessionStorage.getItem("user"))
-        for(let data in res.data.records){
-          if(res.data.records[data].id===user["id"]){
-            oldgold=res.data.records[data].gold
-            oldcoin=res.data.records[data].coin
-          }
-        }
-        let data={"id":user["id"],"name":user["name"],"password":user["password"],"gender":user["gender"],"currentroom":this.location,"gold":oldgold,"coin":oldcoin,"lastroom":this.lastroom}
-        request.put("/user",data).then(res => {
-          if(res.code==="0"){
-            this.$message({
-              type:"success",
-              message:"成功"
-            })
-          }else {
-            this.$message({
-              type:"error",
-              message:res.msg
-            })
-          }
-          this.load()
-        })
-      })*/
     },
     add(){
       this.dialogVisible=true
@@ -403,37 +342,6 @@ export default {
       }
     },
     // eslint-disable-next-line no-unused-vars
-    handleEdit(row){
-      this.form = JSON.parse(JSON.stringify(row))
-      this.dialogVisible = true
-    },
-    handleEdit2(){
-      this.dialogVisible2 = true
-    },
-    handleDelete(id){
-      request.delete("/product/"+id).then(res=>{
-        if(res.code==="0"){
-          this.$message({
-            type:"success",
-            message:"删除成功"
-          })
-        }else {
-          this.$message({
-            type:"error",
-            message:res.msg
-          })
-        }
-        this.load()
-      })
-    },
-    handleSizeChange(pageSize){
-      this.pageSize=pageSize
-      this.load()
-    },
-    handleCurrentChange(pageNum){
-      this.currentPage=pageNum
-      this.load()
-    },
     gameWin(){
       this.dialogVisible3 = false
       this.reset()

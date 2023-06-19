@@ -1,7 +1,7 @@
 <template>
-  <div style="width: 100%;height: 100vh; background-color: #EB9C25; overflow: hidden" >
+  <div style="width: 100%;height: 100vh; background-color: lightcyan; overflow: hidden" >
     <div style="width: 400px;margin: 150px auto">
-      <div style="color: aliceblue;font-size: 25px;font-family: 黑体;color:black; text-align: center;padding: 30px 0">欢迎登录巨洞探险游戏</div>
+      <div style="color: aliceblue;font-size: 25px;font-family: 黑体; text-align: center;padding: 30px 0">欢迎登录巨洞探险游戏</div>
       <el-form ref="form" :model="form" label-width="40px" :rules="rules">
         <el-form-item prop="name" style="margin-left: 40px;margin-right: 40px;">
           <el-input placeholder="请输入用户名" v-model="form.name">
