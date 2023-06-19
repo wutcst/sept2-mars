@@ -7,10 +7,6 @@
     <div style="margin: 10px 0 ;display: flex">
       <el-button type="primary" @click="adduser">新增用户</el-button>
     </div>
-<!--    <div style="margin: 10px 0 ;display: flex">-->
-<!--      <el-input v-model="search" placeholder="请输入内容" style="width: 20%" clearable/>-->
-<!--      <el-button type="primary" style="margin-left: 5px">查询</el-button>-->
-<!--    </div>-->
    <el-table :data="tableData" stripe style="width: 100%" border>
      <el-table-column prop="id" label="ID" width="170" sortable/>
      <el-table-column prop="name" label="用户名" width="220" />
@@ -123,10 +119,10 @@ export default {
   data(){
     return{
       form:{},
-      dialogVisible:false,
-      dialogVisible2:false,
-      currentPage:1,
-      pageSize:10,
+      dialogVisible:false, //修改用户信息窗口
+      dialogVisible2:false, //添加新用户窗口
+      currentPage:1, //当前页面
+      pageSize:10, //页面大小
       total:10,
       search:'',
       tableData:[]
@@ -136,6 +132,10 @@ export default {
     this.load()
   },
   methods:{
+    /**
+     * @description 加载页面信息
+     * @return void
+     * */
     load(){
       request.get("/user?pageNum="+this.currentPage+"&pageSize="+this.pageSize+"&search="+this.search,
 
@@ -145,19 +145,34 @@ export default {
         this.total=res.data.records.length
       })
     },
+    /**
+     * @description 修改用户信息的窗口
+     * @return void
+     * */
     add(){
         this.dialogVisible=true
         this.form={}
     },
+    /**
+     * @description 添加新用户
+     * @return void
+     * */
     adduser(){
       this.dialogVisible2=true
     },
-    //清除对话框中的数据
+    /**
+     * @description 清楚对话框的数据
+     * @return void
+     * */
     closeAddDialog() {
       this.dialogVisible = false   //关闭对话框
       // this.$refs.addRoleForm.resetFields();
       this.form = this.$options.data().form
     },
+    /**
+     * @description 保存用户信息
+     * @return void
+     * */
     save(){
       if(this.form.id){
         request.put("/user",this.form).then(res => {
@@ -196,11 +211,18 @@ export default {
         })
       }
     },
-    // eslint-disable-next-line no-unused-vars
+    /**
+     * @description 修改用户信息
+     * @return void
+     * */
     handleEdit(row){
       this.form = JSON.parse(JSON.stringify(row))
       this.dialogVisible = true
     },
+    /**
+     * @description 删除用户
+     * @return void
+     * */
     handleDelete(id){
       request.delete("/user/"+id).then(res=>{
         if(res.code==="0"){

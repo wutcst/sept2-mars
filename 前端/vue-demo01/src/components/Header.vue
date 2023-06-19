@@ -45,8 +45,15 @@ export default {
       user: sessionStorage.getItem("user") ? JSON.parse(sessionStorage.getItem("user")) : {},
       user2:{}
     }},
+  created() {
+    this.get()
+  },
 
   methods:{
+    /**
+     * @description 用户信息
+     * @return void
+     * */
     get(){
       request.get("/user"
       ).then(res=>{
@@ -58,7 +65,10 @@ export default {
         }
       })
     },
-
+    /**
+     * @description 退出账号
+     * @return void
+     * */
     logout() {
       this.$router.push("/login")
       sessionStorage.removeItem("user")

@@ -98,29 +98,33 @@ export default {
       search:'',
       tableData:[],
       rooms:[{'name':'outside','id':1,'gold':'1','cost':'-1','descriptions':'outside the main entrance of the colossal cave','picture':'assets/images/outside.jpg','takeflag':0},
-        {'name':'theater','id':2,'gold':'2','cost':'-1','descriptions':'in a lecture theater','picture':'assets/images/theater.jpg','takeflag':0},
-        {'name':'pub','id':3,'gold':'4','cost':'-3','descriptions':'in the pub','picture':'assets/images/pub.jpg','takeflag':0},
-        {'name':'lab','id':4,'gold':'3','cost':'-2','descriptions':'in a computing lab','picture':'assets/images/lab.jpg','takeflag':0},
+        {'name':'theater','id':2,'gold':'2','cost':'-1','descriptions':'in the theater ,Mysterious songs are scattered throughout the opera house','picture':'assets/images/theater.jpg','takeflag':0},
+        {'name':'pub','id':3,'gold':'4','cost':'-3','descriptions':'in the quiet bar, the clinking sound of wine glasses','picture':'assets/images/pub.jpg','takeflag':0},
+        {'name':'lab','id':4,'gold':'3','cost':'-2','descriptions':'in a scientific laboratory, only the sound of machines running','picture':'assets/images/lab.jpg','takeflag':0},
         {'name':'treasure','id':5,'gold':'5','cost':'-1','descriptions':'in the treasure room, maybe there has some treasure','picture':'assets/images/treasure.jpg','takeflag':0},
-        {'name':'randomRoom','id':6,'gold':'0','cost':'0','descriptions':'in a random room','picture':'assets/images/randomroom.jpg','takeflag':1},
-        {'name':'exit','id':7,'gold':'0','cost':'0','descriptions':'a way to leave this cave!','picture':'assets/images/exit.jpg','takeflag':0},
+        {'name':'randomRoom','id':6,'gold':'0','cost':'0','descriptions':'in a random room,where do you want to go','picture':'assets/images/randomroom.jpg','takeflag':1},
+        {'name':'exit','id':7,'gold':'0','cost':'0','descriptions':'a way to leave this place!','picture':'assets/images/exit.jpg','takeflag':0},
         {'name':'corridor','id':8,'gold':'0','cost':'0','descriptions':'a long long corridor with cold wind','picture':'assets/images/corridor.jpg','takeflag':1}],
       items:[{'name':'cookie','id':1,'roomId':5,'descriptions':'增加5体力'},
-        {'name':'key','id':2,'roomId':7,'descriptions':'通关的关键物品'}],
-      location:'',
-      gold:'',
-      cost:'',
-      descriptions:'',
-      id:'',
-      lastroom:'',
-      powerFlag:false,
-      maps:[[1,2,3], [5,6,4], [8,7,0]]
+        {'name':'key','id':2,'roomId':7,'descriptions':'通关的关键物品'}], //物品设置
+      location:'', //当前位置
+      gold:'', //金币
+      cost:'', //体力消耗
+      descriptions:'', //房间描述
+      id:'', //房间id
+      lastroom:'', //上次房间信息
+      powerFlag:false, //玩家体力状态
+      maps:[[1,2,3], [5,6,4], [8,7,0]] //地图
     }
   },
   created() {
     this.load()
   },
   methods:{
+    /**
+     * @description 游戏规则说明
+     * @return void
+     * */
     open(){
       this.$notify({
         title: '游戏规则说明',
@@ -128,11 +132,21 @@ export default {
         duration: 4500
       });
     },
+    /**
+     * @description 获取随机数函数
+     * @param {int} min
+     * @param {int} max
+     * @return {int} 随机数值
+     * */
     getRandomInt1(min, max) {
       min = Math.ceil(min);
       max = Math.floor(max);
       return Math.floor(Math.random() * (max - min)) + min; //不含最大值，含最小值
      },
+    /**
+     * @description 加载页面信息
+     * @return void
+     * */
     load(){
       request.get("/user"
       ).then(res=>{
@@ -161,6 +175,10 @@ export default {
         }
       })
     },
+    /**
+     * @description 传送至randomRoom四周任意房间
+     * @return void
+     * */
     portal(){
       let a=this.getRandomInt1(1,5)
       switch (a){
@@ -178,6 +196,10 @@ export default {
           break;
       }
     },
+    /**
+     * @description 拿取房间内物品
+     * @return void
+     * */
     take(){
       let judgeFlag
       let num
@@ -215,7 +237,7 @@ export default {
                 return
               }else{
                 coin=(parseInt(coin)+5).toString()
-                mesage=mesage+" you get a"+this.items[index].name+"your power +5"
+                mesage=mesage+" you get a "+this.items[index].name+" your power +5"
               }
             }
           }
@@ -243,6 +265,9 @@ export default {
         this.rooms[num].takeflag=1
       }
     },
+    /**
+     * @description 刷新用户信息
+     * */
     refresh(){
       let oldgold
       let oldcoin
@@ -277,6 +302,12 @@ export default {
         }
       })
     },
+    /**
+     * @description 玩家移动
+     * @param {int} deltaX 表示南北方向的移动
+     * @param {int} deltaY 表示东西方向的移动
+     * @return void
+     * */
     move(deltaX,deltaY){
      let id=this.id
      let x;
@@ -311,16 +342,20 @@ export default {
        alert("此路不通")
      }
     },
+    /**
+     * @description 返回上一房间
+     * @return void
+     * */
     back(){
       let lastroom = this.lastroom
       this.lastroom=this.location
       this.location=lastroom
       this.refresh()
     },
-    add(){
-      this.dialogVisible=true
-      this.form={}
-    },
+    /**
+     * @description 保存状态信息
+     * @return void
+     * */
     save(){
       if(this.form.id){
         request.put("/user",this.form).then(res => {
@@ -342,14 +377,26 @@ export default {
       }
     },
     // eslint-disable-next-line no-unused-vars
+    /**
+     * @description 游戏胜利
+     * @return void
+     * */
     gameWin(){
       this.dialogVisible3 = false
       this.reset()
     },
+    /**
+     * @description 游戏结束（未获胜）
+     * @return void
+     * */
     gameOver(){
       this.dialogVisible4 = false
       this.reset()
     },
+    /**
+     * @description 重置玩家状态
+     * @return void
+     * */
     reset(){
       request.get("/user"
       ).then(res=>{
