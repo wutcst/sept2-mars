@@ -6,7 +6,7 @@
     <div style="display: flex">
       <!--    侧边栏-->
       <Side />
-      <!--    内容区域-->
+      <!--    内容区域1-->
       <router-view  style="flex: 1"/>
     </div>
   </div>
